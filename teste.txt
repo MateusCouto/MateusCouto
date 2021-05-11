@@ -1,0 +1,65 @@
+Option Explicit
+'Add a reference to ms excel xx.0 object library
+Private bOpen As Boolean
+Private oApp As Excel.Application
+Private oWB As Excel.workbook
+
+Dim X As Double, Y As Double, FleetID As String
+Dim F As String, FCol As Integer, LCol As Integer, LgCol As Integer, Srno As Integer, I As Integer
+
+
+Private Sub cmd_excel_Click()
+
+Dim intCount As Integer
+
+    Set oApp = New Excel.Application
+    Set oWB = oApp.Workbooks.Add(xlWBATWorksheet)
+
+    oWB.ActiveSheet.Name = "vw_Per_EmpresaProdutos"
+'oWB.Sheets("vw_Per_EmpresaProdutos").Visible = xlVeryHidden
+
+
+'oWB.Sheets("vw_Per_EmpresaProdutos").Visible = xlVeryHidden
+' or xlSheetHidden or xlSheetVisible
+
+    oWB.Sheets(1).Cells(1, 1).Value = "Nome"
+    oWB.Sheets(1).Cells(1, 2).Value = "Quantidade"
+    oWB.Sheets(1).Cells(1, 3).Value = "Valor"
+    oWB.Sheets(1).Cells(1, 4).Value = "Descrição"
+    oWB.Sheets(1).Cells(1, 5).Value = "idPedido"
+    oWB.Sheets(1).Cells(1, 6).Value = "idVendedor"
+    
+    'https://docs.microsoft.com/pt-br/office/vba/api/excel.colorindex
+    
+    For intCount = 1 To 7
+       oWB.Sheets(1).Cells(1, intCount).Interior.ColorIndex = 15
+       oWB.Sheets(1).Cells(1, intCount).Font.Bold = True
+    Next intCount
+    
+    oWB.Sheets(1).Cells(1, 10).Interior.ColorIndex = 15
+
+'    oWB.Sheets(1).cells(1, 1).Interior.ColorIndex = 15
+'    oWB.Sheets(1).cells(1, 2).Interior.ColorIndex = 15
+'    oWB.Sheets(1).cells(1, 3).Interior.ColorIndex = 15
+'    oWB.Sheets(1).cells(1, 4).Interior.ColorIndex = 15
+'    oWB.Sheets(1).cells(1, 5).Interior.ColorIndex = 15
+'    oWB.Sheets(1).cells(1, 6).Interior.ColorIndex = 15
+    
+'    oWB.Sheets(1).cells(1, 1).Font.Bold = True
+    
+
+    oWB.SaveAs "K:\Test.xls"
+    oWB.saved = True
+    If bOpen = False Then
+        oWB.Close False
+        Set oWB = Nothing
+        oApp.quit
+        Set oWB = Nothing
+    Else
+        oApp.Visible = True
+    End If
+End Sub
+
+Private Sub Form_Load()
+    bOpen = False
+End Sub
