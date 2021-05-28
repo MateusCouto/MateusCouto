@@ -1,11 +1,16 @@
-SELECT 
- CASE 
-    WHEN ISNULL(s.rate,0) = 0 
-    THEN SELECT TOP 1 pr.rate FROM ProjectRates pr WHERE (pr.projectID = p.ID) AND (pr.effectiveDate < GETDATE()) ORDER BY pr.effectiveDate DESC
-    --p.rate 
-    ELSE SELECT TOP 1 sr.rate FROM ShiftRates sr WHERE (sr.shiftID = s.ID) AND (sr.effectiveDate < GETDATE()) ORDER BY pr.effectiveDate DESC                
-    --s.rate 
-END AS rate
-FROM Projects p
-INNER JOIN Shifts s ON (p.ID = s.projectID)
-WHERE (p.ID = @projectID)
+SELECT (CASE WHEN ISNULL(s.rate, 0) = 0 
+             THEN (SELECT TOP 1 pr.rate
+                   FROM ProjectRates pr
+                   WHERE (pr.projectID = p.ID) AND (pr.effectiveDate < GETDATE())
+                   ORDER BY pr.effectiveDate DESC
+                  )
+             ELSE (SELECT TOP 1 sr.rate
+                   FROM ShiftRates sr
+                   WHERE (sr.shiftID = s.ID) AND (sr.effectiveDate < GETDATE()) 
+                   ORDER BY pr.effectiveDate DESC                
+                  ) --s.rate 
+        END) AS rate
+FROM Projects p INNER JOIN
+     Shifts s 
+     ON p.ID = s.projectID
+WHERE p.ID = @projectID;
