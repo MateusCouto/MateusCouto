@@ -14,3 +14,24 @@ FROM Projects p INNER JOIN
      Shifts s 
      ON p.ID = s.projectID
 WHERE p.ID = @projectID;
+
+
+
+select t.*,
+       (case when not exists (select 1
+                              from table2 t2
+                              where t2.idtable2 = t.idtable1
+                             )
+             then '0'
+        end) as result
+from table1 t;
+
+
+select t.*,
+       (case when (select t2.name
+                   from table2 t2
+                   where t2.idtable2 = t.idtable1
+                  ) is null
+             then '0'
+        end) as result
+from table1 t;
