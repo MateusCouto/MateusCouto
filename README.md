@@ -34,8 +34,6 @@
 ### Contato!
 
 [![Linkedin](https://img.shields.io/badge/Linkedin-1E90FF?logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/mateuscc/)](https://www.linkedin.com/in/mateuscc/)
-[![YouTube](https://img.shields.io/badge/YouTube-FF0000?logo=Linkedin&logoColor=white&link=https://www.youtube.com/channel/UCNJJ75BI75tleEtI1Cc_fLg)](https://www.youtube.com/channel/UCNJJ75BI75tleEtI1Cc_fLg)
-
 ___
 
 <img width="100%" src="https://github-readme-stats.vercel.app/api?username=MateusCouto&&theme=react&show_icons=true&hide=issues&locale=pt-BR" />
