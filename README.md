@@ -1,18 +1,17 @@
 ## Mateus Couto
 
-- 💻 &nbsp; Desenvolvedor C#
+- 💻 &nbsp; Desenvolvedor DBA Junior e C#
 - 🎓 &nbsp; Graduado Sistemas Informatizados: Internet e Redes - Barão de Mauá
 - 🏡 &nbsp; Ribeirão Preto/SP
 
-### Em Estudo ( 2021 )
+### Em Estudo ( 2021 ) DBA Junior
+![SQL_Server](https://img.shields.io/badge/Microsoft_SQL_Server-CC2927?style=flat&logo=microsoft-sql-server&logoColor=white)
 
 ![csharp](https://img.shields.io/badge/C%23-239120?style=flat&logo=c-sharp&logoColor=white)
 ![.NET](https://img.shields.io/badge/.NET-5C2D91?style=flat&logo=.net&logoColor=white)
-![SQL_Server](https://img.shields.io/badge/Microsoft_SQL_Server-CC2927?style=flat&logo=microsoft-sql-server&logoColor=white)
-![VSC](https://img.shields.io/badge/Visual_Studio_Code-0078D4?style=flat&logo=visual%20studio%20code&logoColor==white)
 ![VS2019](https://img.shields.io/badge/Visual_Studio_2019-5C2D91?style=flat&logo=visual%20studio&logoColor==white)
 
-### Tecnologias
+### Tecnologias e Cursos
 
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=flat&logo=java&logoColor=white)
 ![PHP](https://img.shields.io/badge/PHP-777BB4?style=flat&logo=php&logoColor=white)
