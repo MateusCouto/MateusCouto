@@ -1,5 +1,5 @@
-	-- FKS / PK de uma Tabela ( Relacionamento )
-	SELECT
+   -- FKS / PK de uma Tabela ( Relacionamento )
+   SELECT
         'FK_Chave' = FK1.name,
         'Tabela_ChaveEstrangeira' = [tables_FK].name,
         'Referencia' = '--------------->',
