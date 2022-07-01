@@ -25,12 +25,12 @@
 		sys.columns as a
 		INNER JOIN sys.tables as b ON b.object_id = a.object_id  
 	WHERE 
-		b.name not like('%tmp%')
-		--And a.name Like('%Wages%') 
-		--And b.name Like '%Employ%'
-		And a.name Like '%IdPagamentoTipo%'
-		--And b.name Like '%Email%'
-	Order by tabela
+		b.name NOT LIKE('%tmp%')
+		--And a.name LIKE('%Wages%') 
+		--And b.name LIKE '%Employ%'
+		And a.name LIKE '%IdPagamentoTipo%'
+		--And b.name LIKE '%Email%'
+	ORDER BY tabela
 
 
 	-- Busca onde o comando usado Pode ser Procedure, View, SELECT
