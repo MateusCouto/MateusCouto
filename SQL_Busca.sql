@@ -17,7 +17,7 @@
 
 
 
-	-- Buscar Colunas / Tabelas Relacionamento
+	-- Buscar Colunas / Tabelas
 	SELECT 
 		a.name as coluna,
 		b.name as tabela
