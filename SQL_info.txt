@@ -1,0 +1,21 @@
+	Uma dica, os DBA me corrigem
+	https://github.com/MateusCouto/MateusCouto/blob/main/SQL_Busca.sql
+	
+	Primeira consulta
+	FKS / PK de uma Tabela ( Relacionamento )
+		
+	Segunda Consulta
+	Buscar Colunas / Tabelas
+		 
+	Terceira Consulta ( Muito Cuidado p/ não perder Tempo)
+	Busca onde o comando usado Pode ser Procedure, View, SELECT
+		
+	Atalhos p/ Facilitar
+	https://github.com/MateusCouto/MateusCouto/blob/main/atalhoSQL.png
+	
+	Pinagem Tabs p/ fixar no SQL Manager para deixar Fixado as coisas mais importantes.
+		Pinned Tabs
+			https://github.com/MateusCouto/MateusCouto/blob/main/Pin.png
+	
+	P/ Facilitar copia da Procedure com CRTL + F1 sem quebrar muito.
+		Query Results -> SQL Server -> Result to Grid ( Habilita Retain CR/LF on copy or save
