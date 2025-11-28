@@ -1,0 +1,72 @@
+using Genetec.Sdk;
+using Genetec.Sdk.MediaExport;
+
+var exportManager = new MediaExportManager(connection);
+var exportOptions = new MediaExportOptions
+{
+    Source = camera,
+    StartTime = DateTime.UtcNow.AddMinutes(-10),
+    EndTime = DateTime.UtcNow,
+    DestinationFilePath = @"C:\Exports\video.mp4",
+    Format = MediaExportFormat.Mp4
+};
+
+exportManager.Export(exportOptions);
+
+
+using System;
+using Genetec.Sdk;
+using Genetec.Sdk.Workflows;
+using Genetec.Sdk.MediaExport;
+
+namespace SecurityCenterMacros
+{
+    public class ExportVideoMacro : Macro
+    {
+        public override void Execute()
+        {
+            try
+            {
+                // Conexão com o Security Center
+                var connection = Application.Connection;
+                if (!connection.IsConnected)
+                {
+                    Console.WriteLine("Não está conectado ao Security Center.");
+                    return;
+                }
+
+                // ID da câmera (substitua pelo GUID real)
+                var cameraId = new Guid("XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX");
+                var camera = connection.GetEntity(cameraId);
+
+                if (camera == null)
+                {
+                    Console.WriteLine("Câmera não encontrada.");
+                    return;
+                }
+
+                // Configuração da exportação
+                var exportManager = new MediaExportManager(connection);
+                var exportOptions = new MediaExportOptions
+                {
+                    Source = camera,
+                    StartTime = DateTime.UtcNow.AddMinutes(-10), // últimos 10 minutos
+                    EndTime = DateTime.UtcNow,
+                    DestinationFilePath = @"C:\Exports\video.mp4",
+                    Format = MediaExportFormat.Mp4
+                };
+
+                // Executa exportação
+
+
+exportManager.Export(exportOptions);
+                Console.WriteLine("Exportação concluída com sucesso!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro na macro: {ex.Message}");
+            }
+        }
+    }
+}
+ 
