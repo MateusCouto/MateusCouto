@@ -1,0 +1,110 @@
+Analise todo anexo
+
+Depois verifique essa sugestão pela AI abaixo, onde o codigo tem inicio e fim com as tags codigo inicio e codigo fim
+
+
+Um Console NETFramework 4.8.1
+
+Arquitetura recomendada no Worker
+
+Um “Connection Manager” com estado Crie um componente que:
+- mantém _engine único
+- mantém “estou conectando agora?” (evita concorrência)
+- faz LogOnAsync quando necessário
+- faz LogOff/Dispose no stop do serviço
+
+Singleton do Engine	✅ Correto	Alinhado com a documentação Genetec - Engine deve ser long-lived
+Semaphore para Lock	✅ Correto	Evita race conditions em LogOnAsync concorrente
+Backoff Exponencial	✅ Correto	Protege o Directory de sobrecarga
+Interface IGenetecSession	✅ Correto	Facilita testes e inversão de dependência
+Separação de Responsabilidades	✅ Correto	Session (conexão) vs WorkerLoop (lógica)
+
+
+
+Api Endpoints Internos
+
+Endpoint: /v1/Genetec/VideoExport
+
+Descrição: Responsavel por receber um Guid(Camera), Intervalo de Tempo de no máximo 3 a 5mim, Formato em MP4, Boleano para habilitar e desabilitar o Audio, 
+Quando solicitado vai realizar uma chamada no SDK para processoar o Video no Genetec Security Center, vai retornar Status Code de 202 e um payload
+
+{
+	"Id": "40cea3b2-8b95-4905-b9ae-a54b27fd5e49",
+	"Status": "Proccessed",
+	"Uri": ""
+}
+
+Endpoint: "/v1/Genetec/VideoExportStatus"
+2. Baixar Video e upload via PrivateLink no Bucket S3 da AWS
+
+Descrição: Reponsavel para ir até SDK com Guid para validar se Id do VideoExport foi concluido e com isso ele vai retornar Status Code 200, com Uri para ser baixado via SDK.
+
+Endpoint: /v1/Genetec/VideoExportUpload
+1. Baixar utilizando Uri vendo no Endpoint "/v1/Genetec/VideoExportStatus"
+2. Baixar Video e upload via PrivateLink no Bucket S3 da AWS
+
+
+Desenho da Arquitetura
+
+Api/
+Services/
+Models/
+Configuration/
+Worker/
+
+
+
+
+codigo inicio
+
+public interface IGenetecSession
+{
+bool IsConnected { get; }
+Task EnsureConnectedAsync(CancellationToken ct);
+Engine Engine { get; }
+Task StopAsync();
+}
+
+codigo fim
+
+Implementação com reconexão + backoff
+A ideia é: o Worker tenta manter conectividade. Se cair, ele tenta de novo com espera incremental (sem “martelar” o server).
+
+codigo inicio
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Genetec.Sdk;
+
+public sealed class GenetecSession : IGenetecSession
+{
+private readonly string _server;
+private readonly string _user;
+private readonly string _password;
+
+private Engine _engine; private readonly SemaphoreSlim _connectLock = new SemaphoreSlim(1, 1); public Engine Engine => _engine; public bool IsConnected => _engine != null && _engine.IsConnected; public GenetecSession(string server, string user, string password) { _server = server; _user = user; _password = password; _engine = new Engine(); // Ajuda a diagnosticar quedas e transições de estado _engine.ConnectionStateChanged += (s, e) => { // Logue e.StateCode (Connected, Disconnected, Connecting...) // Não reconecte aqui dentro; apenas sinalize/logue. }; } public async Task EnsureConnectedAsync(CancellationToken ct) { if (IsConnected) return; await _connectLock.WaitAsync(ct); try { if (IsConnected) return; // Retry com backoff simples var delay = TimeSpan.FromSeconds(2); var maxDelay = TimeSpan.FromSeconds(60); while (!ct.IsCancellationRequested && !IsConnected) { var result = await _engine.LogOnAsync(_server, _user, _password); if (result == ConnectionStateCode.Success) return; // Logue o result para saber o motivo (credencial, privilégio, rede, etc.) await Task.Delay(delay, ct); // backoff (2s, 4s, 8s... até 60s) delay = TimeSpan.FromSeconds(Math.Min(maxDelay.TotalSeconds, delay.TotalSeconds * 2)); } } finally { _connectLock.Release(); } } public Task StopAsync() { try { _engine?.LogOff(); _engine?.Dispose(); } finally { _engine = null; } return Task.CompletedTask; }
+}
+codigo fim
+
+Por que isso funciona bem?
+
+O Engine centraliza sessão/cache/eventos e foi pensado para ser “long-lived”. [github.com]
+Evita múltiplos LogOnAsync simultâneos (lock).
+Backoff protege o Directory e evita loops agressivos.
+
+O loop do Worker: manter vivo + fazer trabalho
+No Worker, você roda um loop:
+
+Garante conexão (EnsureConnectedAsync)
+Executa “job”
+Espera um intervalo
+Se cair, o próximo ciclo reconecta
+
+codigo inicio
+public sealed class WorkerLoop
+{
+private readonly IGenetecSession _session;
+
+public WorkerLoop(IGenetecSession session) { _session = session; } public async Task RunAsync(CancellationToken ct) { while (!ct.IsCancellationRequested) { // 1) Garante sessão ativa await _session.EnsureConnectedAsync(ct); // 2) Faz seu trabalho (sync, eventos, queries etc.) // Use _session.Engine aqui await DoWorkAsync(_session.Engine, ct); // 3) Intervalo (ajuste conforme seu caso) await Task.Delay(TimeSpan.FromSeconds(10), ct); } } private Task DoWorkAsync(Engine engine, CancellationToken ct) { // Ex.: ler entidades, executar queries, processar eventos etc. return Task.CompletedTask; }
+}
+codigo fim
